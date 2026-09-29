@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#CE1126">
+<title>ådirá — Homemade food commerce</title>
+<meta name="description" content="Homemade jars, jams, pickles, sauces and pantry favorites. Order online and confirm on WhatsApp.">
+<link rel="icon" href="logo-red.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#CE1126; --red-dark:#A80E1F; --red-soft:#FCE8EA;
+  --bg:#F8F2E9; --card:#FFFFFF; --line:#EEE5D8; --ink:#1E1B18; --muted:#8A817A;
+  --shadow:0 2px 10px rgba(60,35,20,.06);
+  --r:16px;
+  --font:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Tajawal",sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.45;-webkit-font-smoothing:antialiased;min-height:100vh}
+html[dir=rtl] body{font-family:"Tajawal","Segoe UI",system-ui,sans-serif}
+img{display:block;max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px;border-radius:8px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+.hidden{display:none!important}
+
+/* ---------- top app bar ---------- */
+.appbar{position:sticky;top:0;z-index:30;background:var(--red);color:#fff;padding-top:env(safe-area-inset-top)}
+.appbar .wrap{height:64px;display:flex;align-items:center;gap:28px;position:relative}
+.brand img{height:34px;width:auto}
+.bar-title{font-weight:700;font-size:1.2rem;white-space:nowrap}
+.topnav{margin-inline-start:auto;display:flex;align-items:center;gap:22px}
+.topnav a{font-weight:600;opacity:.9;position:relative;padding:6px 0}
+.topnav a:hover,.topnav a[aria-current=page]{opacity:1}
+.topnav a[aria-current=page]::after{content:"";position:absolute;inset-inline:0;bottom:-2px;height:2px;background:#fff;border-radius:2px}
+.topnav .count{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#fff;color:var(--red);font-size:.75rem;font-weight:800;margin-inline-start:5px;vertical-align:1px}
+.lang{border:1.5px solid rgba(255,255,255,.85);color:#fff;border-radius:999px;padding:4px 14px;font-weight:700;font-size:.9rem;min-height:34px}
+.lang:hover{background:#fff;color:var(--red)}
+
+/* ---------- mobile bottom tab bar ---------- */
+.tabbar{display:none}
+@media (max-width:760px){
+  .appbar .wrap{height:58px;justify-content:space-between}
+  .topnav a{display:none}
+  .brand{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+  .brand img{height:30px}
+  .bar-title{font-size:.9rem}
+  .appbar:not(.sub) .bar-title{display:none}
+  .appbar.sub .wrap{height:76px}
+  .appbar.sub .brand{top:10px;transform:translateX(-50%)}
+  .appbar.sub .bar-title{position:absolute;inset-inline-start:14px;bottom:8px}
+  .appbar.sub .lang{position:absolute;inset-inline-end:14px;top:10px}
+  .topnav{margin-inline-start:auto}
+  .tabbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;inset-inline:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+  .tabbar a{display:grid;justify-items:center;gap:2px;padding:8px 0 9px;font-size:.72rem;font-weight:600;color:var(--muted);position:relative}
+  .tabbar a svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .tabbar a[aria-current=page]{color:var(--red)}
+  .tabbar .count{position:absolute;top:4px;left:calc(50% + 6px);min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:.68rem;font-weight:800;display:grid;place-items:center;padding:0 4px}
+  body{padding-bottom:70px}
+}
+
+/* ---------- shared pieces ---------- */
+main.wrap{padding-top:18px;padding-bottom:36px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--line)}
+.search{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:0 16px;height:48px;box-shadow:var(--shadow);cursor:text}
+.search svg{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2;flex:none}
+.search input{border:0;outline:0;background:transparent;width:100%;height:100%;padding:0}
+.search:focus-within{border-color:var(--red)}
+h2.sec{font-size:1.35rem;font-weight:700;margin:26px 0 12px}
+.pill{border:1.5px solid var(--c,var(--red));color:var(--c,var(--red));background:#fff;border-radius:12px;font-weight:600;padding:8px 14px;min-height:42px;white-space:nowrap;text-align:center;display:grid;place-items:center}
+.pill:hover{background:color-mix(in srgb,var(--c,var(--red)) 8%,#fff)}
+.filter{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;font-weight:600;padding:8px 22px;min-height:40px;white-space:nowrap;box-shadow:var(--shadow)}
+.filter[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
+.btn{background:var(--red);color:#fff;border-radius:14px;font-weight:700;min-height:50px;padding:0 22px;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;font-size:1.02rem}
+.btn:hover{background:var(--red-dark)}
+.btn svg{width:22px;height:22px;fill:currentColor}
+.plus{width:34px;height:34px;border-radius:50%;background:var(--red);display:grid;place-items:center;flex:none}
+.plus:hover{background:var(--red-dark)}
+.plus svg{width:16px;height:16px;stroke:#fff;stroke-width:3;fill:none;stroke-linecap:round}
+.plus[disabled]{background:#D9D1C7;cursor:not-allowed}
+.step{display:inline-flex;align-items:center;gap:2px;background:var(--red-soft);border-radius:999px;padding:3px}
+.step button{width:28px;height:28px;border-radius:50%;background:var(--red);color:#fff;font-weight:800;font-size:1rem;line-height:1;display:grid;place-items:center}
+.step span{min-width:24px;text-align:center;font-weight:800;color:var(--red)}
+.step.lg button{width:40px;height:40px;font-size:1.25rem}
+.step.lg span{min-width:40px;font-size:1.1rem}
+.badge{position:absolute;top:8px;inset-inline-start:8px;color:#fff;font-size:.7rem;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--c,var(--red))}
+.price{color:var(--red);font-weight:700}
+.empty{text-align:center;color:var(--muted);padding:48px 16px}
+.empty .btn{width:auto;display:inline-flex;margin-top:16px}
+
+/* ---------- home ---------- */
+.home-top{display:grid;grid-template-columns:1fr 330px;gap:22px;margin-top:18px}
+.hero{position:relative;border-radius:22px;overflow:hidden;min-height:300px;background:linear-gradient(160deg,#F5E9D8 0%,#EBD7BD 100%)}
+.hero.has-photo{background:url(images/hero.jpg) center 60%/cover no-repeat}
+.hero .jars{position:absolute;inset:auto 0 0 0;display:flex;justify-content:center;align-items:flex-end;gap:4px;padding:0 10px}
+.hero .jars svg{height:170px;width:auto}
+.hero .jars svg:nth-child(even){height:135px}
+.hero.has-photo .jars{display:none}
+.hero-label{position:absolute;top:26px;inset-inline-start:26px;background:rgba(255,255,255,.9);backdrop-filter:blur(4px);border-radius:14px;padding:12px 22px;max-width:calc(100% - 52px)}
+.hero-label strong{display:block;font-size:1.6rem;font-weight:700;line-height:1.15}
+.hero-label span{color:var(--muted);font-size:.95rem}
+.cats{padding:22px}
+.cats h2{font-size:1.3rem;font-weight:700;margin-bottom:16px}
+.cats .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.popular{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+
+/* ---------- product card ---------- */
+.pcard{min-width:0;padding:8px 8px 12px;display:flex;flex-direction:column;transition:transform .15s, box-shadow .15s}
+.pcard:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(60,35,20,.1)}
+.pcard .pic{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:4/3;background:#F4ECE1;display:block}
+.pic img,.pic svg{width:100%;height:100%;object-fit:cover}
+.pic img,.big img,.thumb img{object-fit:contain!important;background:#fff}
+.pic:has(img),.big:has(img),.thumb:has(img){background:#fff}
+.pcard .info{padding:12px 6px 0;display:flex;flex-direction:column;flex:1;gap:2px}
+.pcard h3{font-size:1rem;font-weight:700;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:2.5em}
+.price.tbc{color:var(--muted);font-size:.8rem;font-weight:600;white-space:nowrap}
+.sizes{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.sizes a{border:1.5px solid var(--line);border-radius:12px;padding:7px 14px;font-weight:600;font-size:.9rem;background:#fff}
+.sizes a[aria-current=true]{border-color:var(--red);color:var(--red);background:var(--red-soft)}
+.pcard .unit{color:var(--muted);font-size:.8rem}
+.pcard .row{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:10px;gap:8px}
+.pcard .price{font-size:1.05rem}
+.pcard.out .pic{filter:grayscale(.6);opacity:.7}
+
+/* ---------- shop ---------- */
+.shopbar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:54px;margin-top:14px}
+.shopbar strong{font-weight:700}
+.shopbar span{color:var(--muted);font-size:.9rem}
+.filters{display:flex;gap:10px;overflow-x:auto;padding:16px 2px 8px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(210px,100%),1fr));gap:16px;margin-top:10px}
+
+/* ---------- product details ---------- */
+.detail{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;margin-top:14px;align-items:start}
+.detail .big{border-radius:22px;overflow:hidden;aspect-ratio:1/1;background:#F4ECE1;position:relative}
+.detail .big img,.detail .big svg{width:100%;height:100%;object-fit:cover}
+.detail .panel{padding:28px}
+.detail h1{font-size:2rem;font-weight:700;line-height:1.15}
+.detail .sub{color:var(--muted);margin-top:4px}
+.detail .price{font-size:1.6rem;margin:14px 0 20px}
+.detail h4{font-weight:700;margin-bottom:6px}
+.detail p.desc{color:#5E5750;margin-bottom:22px}
+.qtyrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-weight:600}
+.back:hover{color:var(--red)}
+html[dir=rtl] .back svg{transform:scaleX(-1)}
+.soldout-note{background:var(--red-soft);color:var(--red);border-radius:12px;padding:12px 14px;font-weight:600;text-align:center}
+
+/* ---------- cart ---------- */
+.cart{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:start}
+.cart h1{font-size:1.5rem;font-weight:700;margin:6px 0 14px}
+.citem{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;padding:10px 16px 10px 10px;margin-bottom:12px}
+html[dir=rtl] .citem{padding:10px 10px 10px 16px}
+.citem .thumb{width:64px;height:64px;border-radius:10px;overflow:hidden;background:#F4ECE1;display:block}
+.citem .thumb img,.citem .thumb svg{width:100%;height:100%;object-fit:cover}
+.citem strong{display:block;font-weight:700}
+.citem small{color:var(--muted)}
+.citem .right{display:grid;justify-items:end;gap:8px}
+.box{padding:18px 20px;margin-bottom:14px}
+.box h3{font-weight:700;font-size:1.05rem;margin-bottom:12px}
+.sum{display:flex;justify-content:space-between;padding:4px 0;color:#5E5750;gap:10px}
+.sum.total{color:var(--ink);font-weight:800;font-size:1.15rem;border-top:1px solid var(--line);margin-top:8px;padding-top:12px}
+.sum.total span:last-child{color:var(--red)}
+.fnote{color:var(--muted);font-size:.82rem;margin-top:8px;text-align:center}
+form{display:grid;gap:10px}
+label{display:grid;gap:5px;font-size:.88rem;font-weight:600}
+input,select,textarea{border:1px solid var(--line);background:#FBF8F3;border-radius:12px;padding:11px 13px;width:100%;font-weight:400}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--red);background:#fff}
+textarea{min-height:70px;resize:vertical}
+.err{color:var(--red);font-size:.8rem;font-weight:600}
+.err:empty{display:none}
+
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:10px 0 34px}
+footer a{color:var(--red);font-weight:700}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:28px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;z-index:50;opacity:0;transition:opacity .2s;pointer-events:none;font-weight:600;font-size:.92rem;white-space:nowrap}
+.toast.on{opacity:1}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .home-top{grid-template-columns:1fr}
+  .popular{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .detail,.cart{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .wrap{padding:0 14px}
+  .hero{min-height:210px;border-radius:18px}
+  .hero .jars svg{height:120px}.hero .jars svg:nth-child(even){height:96px}
+  .hero .jars svg:nth-child(n+6){display:none}
+  .hero-label{top:16px;inset-inline-start:16px;padding:9px 16px}
+  .hero-label strong{font-size:1.2rem}
+  .hero-label span{font-size:.82rem}
+  .cats{padding:0;background:none;border:0;box-shadow:none}
+  .cats h2{font-size:1.15rem;margin:4px 0 10px}
+  .cats .grid2{display:flex;overflow-x:auto;gap:10px;scrollbar-width:none}
+  .cats .pill{min-width:104px}
+  h2.sec{font-size:1.15rem;margin-top:20px}
+  .popular,.pgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .pcard h3{font-size:.92rem}
+  .price.tbc{white-space:normal;font-size:.74rem;line-height:1.2}
+  .hero.has-photo{background-position:62% 55%}
+  .detail{gap:0}
+  .detail .big{border-radius:18px 18px 0 0;aspect-ratio:1/.85}
+  .detail .panel{border-radius:22px;margin-top:-26px;position:relative;padding:22px 20px}
+  .detail h1{font-size:1.5rem}
+  .toast{bottom:90px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="appbar" id="appbar">
+  <div class="wrap">
+    <a class="brand" href="#/" aria-label="ådirá home"><img src="logo-white.png" alt="ådirá"></a>
+    <span class="bar-title" id="barTitle">Homemade food commerce</span>
+    <nav class="topnav" aria-label="Main">
+      <a href="#/" data-nav="home" data-i="home">Home</a>
+      <a href="#/shop" data-nav="shop" data-i="shop">Shop</a>
+      <a href="#/cart" data-nav="cart"><span data-i="cart">Cart</span><span class="count hidden" data-count>0</span></a>
+      <a href="#" data-wa data-i="contact" target="_blank" rel="noopener">Contact</a>
+      <button class="lang" id="langBtn">عربي</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="view" aria-live="polite"></main>
+
+<footer class="wrap">
+  <p><span data-i="footer">Questions about an order?</span> <a href="#" data-wa target="_blank" rel="noopener" data-i="msgUs">Message us on WhatsApp</a></p>
+  <p style="margin-top:6px">© <span id="yr"></span> ådirá</p>
+</footer>
+
+<nav class="tabbar" aria-label="Main">
+  <a href="#/" data-nav="home"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span data-i="home">Home</span></a>
+  <a href="#/shop" data-nav="shop"><svg viewBox="0 0 24 24"><path d="M4 7h16l-1.2 12.2a2 2 0 0 1-2 1.8H7.2a2 2 0 0 1-2-1.8z"/><path d="M8.5 7V6a3.5 3.5 0 0 1 7 0v1"/></svg><span data-i="shop">Shop</span></a>
+  <a href="#/cart" data-nav="cart"><svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3.5h3l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.3a1.5 1.5 0 0 0 1.5-1.1l1.6-6.3H6.6"/></svg><span data-i="cart">Cart</span><span class="count hidden" data-count>0</span></a>
+  <a href="#" data-wa target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.5 7.4L3.5 20.5 5 16.2A8.4 8.4 0 1 1 20.5 11.6z"/></svg><span data-i="contact">Contact</span></a>
+</nav>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ============================================================
+   SETTINGS — the only lines you need to edit
+   ============================================================ */
+const WHATSAPP_NUMBER = "96170000000";  // country code + number, digits only (no + or spaces)
+const SHEET_CSV_URL   = "";             // your Google Sheet "Publish to web" CSV link
+const CURRENCY        = "$";
+const DELIVERY_FEE    = null;           // e.g. 2 for a fixed $2 fee, or null to confirm the fee on WhatsApp
+/* ============================================================ */
+
+const T = {
+ en:{home:"Home",shop:"Shop",cart:"Cart",contact:"Contact",barHome:"Homemade food commerce",barShop:"Shop",barDetail:"Product Details",barCart:"Cart",
+  search:"Search homemade jars, jams, pickles…",heroTitle:"Homemade flavors",heroSub:"Jams, jars, pickles & pantry favorites",
+  byCat:"Shop by Category",popular:"Popular Products",allProducts:"All homemade products",items:"items",all:"All",
+  soldOut:"Sold out",add:"Add to cart",description:"Description",quantity:"Quantity",back:"Back to shop",notFound:"This product isn't available anymore.",
+  yourOrder:"Your order",qty:"Qty",emptyCart:"Your cart is empty.",startShopping:"Start shopping",noResults:"No products match your search.",
+  details:"Delivery details",name:"Full name",phone:"Phone number",address:"Delivery address or area",payment:"Payment method",cod:"Cash on delivery",whish:"Whish Money",omt:"OMT",notes:"Notes (optional)",
+  summary:"Order Summary",subtotal:"Subtotal",delivery:"Delivery",onWa:"Confirmed on WhatsApp",total:"Total",askPrice:"Price on request",someTbc:"Items marked \"price on request\" are confirmed on WhatsApp.",size:"Size",mPriceTbc:"price to confirm",send:"Send order on WhatsApp",sendNote:"WhatsApp opens with your order written out. Press send to place it.",
+  needName:"Enter your name.",needPhone:"Enter a phone number we can reach.",needAddress:"Enter your delivery address or area.",
+  added:"Added to cart",opening:"Opening WhatsApp…",loadFail:"Could not reach the product sheet. Showing saved products.",
+  footer:"Questions about an order?",msgUs:"Message us on WhatsApp",lang:"عربي",
+  msgHead:"New order — ådirá",mName:"Name",mPhone:"Phone",mAddr:"Address",mPay:"Payment",mItems:"Items",mSub:"Subtotal",mDel:"Delivery",mTotal:"Total",mNotes:"Notes",mTbc:"to be confirmed"},
+ ar:{home:"الرئيسية",shop:"المتجر",cart:"السلة",contact:"تواصل",barHome:"مونة بيتية",barShop:"المتجر",barDetail:"تفاصيل المنتج",barCart:"السلة",
+  search:"ابحث عن مربيات، مخللات، مونة…",heroTitle:"نكهات بيتية",heroSub:"مربيات، مخللات ومونة البيت",
+  byCat:"تسوّق حسب الفئة",popular:"الأكثر طلباً",allProducts:"كل المنتجات البيتية",items:"منتج",all:"الكل",
+  soldOut:"نفذت الكمية",add:"أضف إلى السلة",description:"الوصف",quantity:"الكمية",back:"العودة إلى المتجر",notFound:"هذا المنتج لم يعد متوفراً.",
+  yourOrder:"طلبك",qty:"الكمية",emptyCart:"السلة فارغة.",startShopping:"ابدأ التسوّق",noResults:"لا توجد منتجات تطابق البحث.",
+  details:"معلومات التوصيل",name:"الاسم الكامل",phone:"رقم الهاتف",address:"عنوان التوصيل أو المنطقة",payment:"طريقة الدفع",cod:"الدفع عند الاستلام",whish:"ويش موني",omt:"OMT",notes:"ملاحظات (اختياري)",
+  summary:"ملخص الطلب",subtotal:"المجموع الفرعي",delivery:"التوصيل",onWa:"يُؤكَّد عبر واتساب",total:"المجموع",askPrice:"السعر عند الطلب",someTbc:"أسعار المنتجات \"عند الطلب\" تُؤكَّد عبر واتساب.",size:"الحجم",mPriceTbc:"السعر يُؤكَّد",send:"أرسل الطلب عبر واتساب",sendNote:"يفتح واتساب مع طلبك مكتوباً. اضغط إرسال لتأكيده.",
+  needName:"اكتب اسمك.",needPhone:"اكتب رقم هاتف نقدر نوصلك عليه.",needAddress:"اكتب عنوان التوصيل أو المنطقة.",
+  added:"أُضيف إلى السلة",opening:"جاري فتح واتساب…",loadFail:"تعذّر الوصول إلى جدول المنتجات. نعرض المنتجات المحفوظة.",
+  footer:"عندك سؤال عن طلب؟",msgUs:"راسلنا عبر واتساب",lang:"EN",
+  msgHead:"طلب جديد — ådirá",mName:"الاسم",mPhone:"الهاتف",mAddr:"العنوان",mPay:"الدفع",mItems:"الطلب",mSub:"المجموع الفرعي",mDel:"التوصيل",mTotal:"المجموع",mNotes:"ملاحظات",mTbc:"يُحدَّد لاحقاً"}
+};
+const CAT_COLORS = ["#E8772E","#2E8B57","#CE1126","#8E4BB5","#B07A2A","#1F7A8C","#C2185B"];
+
+const FALLBACK_CSV = `id,category,category_ar,name,name_ar,unit,unit_ar,price,description,description_ar,details,details_ar,image,badge,badge_ar,popular,available
+1,Jams,مربيات,Apple Jam,مربى التفاح,330 g,330 غ,,"A smooth apple jam made with fresh apples, sugar, and lemon juice, with a naturally sweet and fruity taste.",مربى تفاح ناعم من تفاح طازج وسكر وحامض، بطعم حلو وفاكهي طبيعي.,"Prepared from fresh apples with sugar and lemon juice, this jam has a smooth texture and balanced sweetness. Suitable for spreading on bread and toast, as well as for pastries, pancakes, desserts, and other sweet preparations.",,images/apple-jam-330g.jpg,,,,yes
+2,Jams,مربيات,Apricot Jam,مربى المشمش,760 g,760 غ,,"A rich and fruity jam crafted from carefully selected apricots for an authentic homemade taste. Made with simple, natural ingredients.",مربى غني بالفاكهة من مشمش مختار بعناية، بطعم بيتي أصيل ومكوّنات طبيعية بسيطة.,"Prepared using carefully selected apricots, sugar, and lemon juice, this jam captures the rich, fruity flavor of ripe apricots in every spoonful. A delicious choice for breakfast, baking, or pairing with your favorite desserts.",,images/apricot-jam-760g.jpg,,,yes,yes
+3,Jams,مربيات,Fig Jam,مربى التين المطبوخ,330 g,330 غ,,A traditional Lebanese favorite with a naturally rich sweetness and velvety texture. Made with fresh figs and simple ingredients.,مربى لبناني تقليدي بحلاوة طبيعية غنية وقوام مخملي، من تين طازج.,"Prepared from fresh figs and simple ingredients, this traditional fig jam has a naturally sweet flavor and soft, smooth consistency. It is suitable for breakfast, spreading on bread and toast, and serving with cheese, pastries, or as part of traditional Lebanese and Mediterranean dishes.",,images/fig-jam-330g.jpg,,,,yes
+4,Jams,مربيات,Strawberry Jam,مربى الفريز,330 g,330 غ,,"A smooth strawberry jam made with ripe strawberries, sugar, and lemon juice for a naturally sweet and fruity taste.",مربى فريز ناعم من فريز ناضج وسكر وحامض، بطعم حلو وفاكهي طبيعي.,"Made from ripe strawberries slowly prepared with sugar and lemon juice, this jam retains a pleasant fruity flavor and spreadable texture. It can be enjoyed with bread and toast or used in pastries, cakes, desserts, and other sweet recipes.",,images/strawberry-jam-330g.jpg,,,,yes
+5,Jams,مربيات,Strawberry Jam,مربى الفريز,760 g,760 غ,,"A smooth strawberry jam made with ripe strawberries, sugar, and lemon juice for a naturally sweet and fruity taste.",مربى فريز ناعم من فريز ناضج وسكر وحامض، بطعم حلو وفاكهي طبيعي.,"Made from ripe strawberries slowly prepared with sugar and lemon juice, this jam retains a pleasant fruity flavor and spreadable texture. It can be enjoyed with bread and toast or used in pastries, cakes, desserts, and other sweet recipes.",,images/strawberry-jam-760g.jpg,,,,yes
+6,Pickles,مخللات,Cucumber Pickles,مخلل خيار,600 g · drained 450 g,600 غ · بعد التصفية 450 غ,,"Crisp cucumber pickles prepared with vinegar and salt, offering a fresh and tangy taste.",مخلل خيار مقرمش بالخل والملح، بنكهة منعشة وحامضة.,"Fresh cucumbers are carefully pickled in a simple blend of water, vinegar, and salt to preserve their crisp texture and distinctive tangy flavor. Ideal for serving alongside sandwiches, burgers, mezze, salads, and everyday meals.",,images/cucumber-pickles-600g.jpg,,,,yes
+7,Pickles,مخللات,Diced Beetroot,شمندر مقطّع,660 g · drained 450 g,660 غ · بعد التصفية 450 غ,,"Tender diced beetroot preserved with lemon juice, salt, and a touch of sugar for a fresh, mildly sweet and tangy taste.",شمندر مقطّع طري محفوظ بالحامض والملح وقليل من السكر، بطعم حلو وحامض.,"Carefully prepared diced beetroot preserved in water with sugar, salt, and lemon juice. It has a tender texture and balanced sweet-tangy flavor, making it convenient for salads, sandwiches, bowls, side dishes, and a variety of recipes.",,images/diced-beetroot-660g.jpg,,,,yes
+8,Pickles,مخللات,Makdous with Walnut,مكدوس بالجوز,300 g · drained 250 g,300 غ · بعد التصفية 250 غ,,"Tender baby eggplants filled with a flavorful mixture of walnuts, garlic, and sweet peppers, preserved in oil.",باذنجان صغير طري محشو بالجوز والثوم والفليفلة الحلوة، محفوظ بالزيت.,"Baby eggplants are carefully prepared and filled with walnuts, garlic, sweet peppers, and selected seasonings, then preserved in a blend of olive and sunflower oil. A traditional Lebanese specialty with a rich, savory flavor, ready to serve as part of mezze, alongside meals, or on its own.",,images/makdous-with-walnut-300g.jpg,,,yes,yes
+9,Pickles,مخللات,Makdous with Walnut,مكدوس بالجوز,600 g · drained 450 g,600 غ · بعد التصفية 450 غ,,"Tender baby eggplants filled with a flavorful mixture of walnuts, garlic, and sweet peppers, preserved in oil.",باذنجان صغير طري محشو بالجوز والثوم والفليفلة الحلوة، محفوظ بالزيت.,"Baby eggplants are carefully prepared and filled with walnuts, garlic, sweet peppers, and selected seasonings, then preserved in a blend of olive and sunflower oil. A traditional Lebanese specialty with a rich, savory flavor, ready to serve as part of mezze, alongside meals, or on its own.",,images/makdous-with-walnut-600g.jpg,,,,yes
+10,Pickles,مخللات,Makdous with Walnut – Hot,مكدوس بالجوز حار,300 g · drained 250 g,300 غ · بعد التصفية 250 غ,,"Baby eggplants stuffed with walnuts, garlic, and hot peppers, preserved in oil for a distinctive spicy flavor.",باذنجان صغير محشو بالجوز والثوم والفليفلة الحارة، محفوظ بالزيت بنكهة حارة مميزة.,"Baby eggplants are filled with walnuts, garlic, hot peppers, and selected seasonings, then preserved in a blend of olive and sunflower oil. This traditional Lebanese preparation combines the rich taste of walnuts and eggplant with a noticeable spicy touch, making it suitable for mezze and everyday meals.",,images/makdous-with-walnut-hot-300g.jpg,Spicy,حار,,yes
+11,Pickles,مخللات,Makdous with Walnut – Hot,مكدوس بالجوز حار,600 g · drained 450 g,600 غ · بعد التصفية 450 غ,,"Baby eggplants stuffed with walnuts, garlic, and hot peppers, preserved in oil for a distinctive spicy flavor.",باذنجان صغير محشو بالجوز والثوم والفليفلة الحارة، محفوظ بالزيت بنكهة حارة مميزة.,"Baby eggplants are filled with walnuts, garlic, hot peppers, and selected seasonings, then preserved in a blend of olive and sunflower oil. This traditional Lebanese preparation combines the rich taste of walnuts and eggplant with a noticeable spicy touch, making it suitable for mezze and everyday meals.",,images/makdous-with-walnut-hot-600g.jpg,Spicy,حار,,yes
+12,Pickles,مخللات,Mixed Vegetable Pickles,مخلل مشكّل,600 g · drained 400 g,600 غ · بعد التصفية 400 غ,,A colorful selection of vegetables pickled using traditional Lebanese recipes.,تشكيلة ملوّنة من الخضار المخللة على الطريقة اللبنانية التقليدية.,"A traditional mix of vegetables prepared in a vinegar-and-salt brine, offering a variety of textures and a balanced tangy flavor. Suitable as a side dish, mezze accompaniment, or addition to sandwiches, salads, and everyday meals.",,images/mixed-vegetable-pickles-600g.jpg,,,,yes
+13,Pickles,مخللات,Wild Cucumber Pickles,مخلل خيار بري,600 g · drained 450 g,600 غ · بعد التصفية 450 غ,,Traditional wild cucumbers with a bold flavor and irresistible crunch.,خيار بري تقليدي بنكهة قوية وقرمشة لا تقاوم.,"Prepared from carefully selected wild cucumbers in a simple brine of water, vinegar, and salt, these pickles retain their natural crunch and characteristic flavor. Suitable as a side dish, mezze accompaniment, or addition to sandwiches and everyday meals.",,images/wild-cucumber-pickles-600g.jpg,,,,yes
+14,Sauces,صلصات ومعاجين,Beetroot Tahini Sauce,صلصة الطحينة بالشمندر,290 g,290 غ,,"A colorful blend of beetroot and tahini, bringing a smooth texture and naturally rich flavor.",مزيج ملوّن من الشمندر والطحينة بقوام ناعم ونكهة غنية.,"Made with beetroot, sesame paste, lemon juice, olive oil, garlic, salt, and black pepper, this colorful spread offers a naturally earthy flavor and creamy texture that's perfect for appetizers, sandwiches, or healthy snacks.",,images/beetroot-tahini-sauce-290g.jpg,,,,yes
+15,Sauces,صلصات ومعاجين,Black Olive Paste,معجون الزيتون الأسود,250 g,250 غ,,"A smooth paste made from ground black olives, suitable for sandwiches, appetizers, and a variety of Mediterranean dishes.",معجون ناعم من الزيتون الأسود المطحون، للسندويشات والمقبلات والأطباق المتوسطية.,"Made from 100% ground black olives, this paste has a smooth consistency and distinctive olive flavor. It can be used in sandwiches, spreads, pizzas, crackers, appetizers, and other Mediterranean-style dishes.",,images/black-olive-paste-250g.jpg,,,,yes
+16,Sauces,صلصات ومعاجين,Concentrated Tomato Juice,عصير بندورة مركّز,300 g,300 غ,,"A concentrated tomato juice made from fresh, ripe tomatoes with a touch of salt, suitable for everyday cooking.",عصير بندورة مركّز من بندورة طازجة وناضجة مع قليل من الملح، للطبخ اليومي.,"Made from fresh, ripe tomatoes with a touch of salt, our Concentrated Tomato Juice provides a rich tomato taste and smooth consistency. It can be used in sauces, soups, stews, pasta, and a variety of traditional Lebanese and Mediterranean dishes.",,images/concentrated-tomato-juice-300g.jpg,,,,yes
+17,Sauces,صلصات ومعاجين,Hot Chili Paste,معجون الفليفلة الحارة,250 g,250 غ,,"A concentrated chili paste made from selected hot peppers and salt, ideal for adding heat and flavor to a variety of dishes.",معجون مركّز من الفليفلة الحارة المختارة والملح، يضيف حرارة ونكهة للأطباق.,"Prepared from selected hot peppers and salt, this chili paste provides a strong, spicy flavor and smooth consistency. Suitable for sandwiches, marinades, grilled meats, sauces, and other dishes where a touch of heat is desired.",,images/hot-chili-paste-250g.jpg,Spicy,حار,,yes
+18,Sauces,صلصات ومعاجين,Pasta Sauce,صلصة باستا,300 g,300 غ,,"A ready-to-use tomato sauce prepared with ripe tomatoes, herbs, garlic, onion, and selected seasonings.",صلصة بندورة جاهزة مع الأعشاب والثوم والبصل وتوابل مختارة.,"Prepared with ripe tomatoes, tomato paste, thyme, garlic, onion, basil, and selected seasonings, this sauce offers a well-balanced texture and savory tomato flavor. Convenient to use, it is suitable for pasta, baked dishes, and a variety of Mediterranean-inspired recipes.",,images/pasta-sauce-300g.jpg,,,,yes
+19,Sauces,صلصات ومعاجين,Pasta Sauce,صلصة باستا,600 g,600 غ,,"A ready-to-use tomato sauce prepared with ripe tomatoes, herbs, garlic, onion, and selected seasonings.",صلصة بندورة جاهزة مع الأعشاب والثوم والبصل وتوابل مختارة.,"Prepared with ripe tomatoes, tomato paste, thyme, garlic, onion, basil, and selected seasonings, this sauce offers a well-balanced texture and savory tomato flavor. Convenient to use, it is suitable for pasta, baked dishes, and a variety of Mediterranean-inspired recipes.",,images/pasta-sauce-600g.jpg,,,,yes
+20,Sauces,صلصات ومعاجين,Pizza Sauce,صلصة بيتزا,300 g,300 غ,,"A ready-to-use tomato sauce prepared with ripe tomatoes, herbs, spices, garlic, and onion, ideal for homemade pizza.",صلصة بندورة جاهزة مع الأعشاب والبهارات والثوم والبصل، مثالية للبيتزا البيتية.,"Made from ripe tomatoes and tomato paste, combined with garlic, onion, herbs, spices, and lemon. This ready-to-use sauce has a balanced tomato flavor and smooth consistency, making it suitable for homemade pizza as well as pasta, sandwiches, and other tomato-based dishes.",,images/pizza-sauce-300g.jpg,,,,yes
+21,Sauces,صلصات ومعاجين,Pizza Sauce,صلصة بيتزا,600 g,600 غ,,"A ready-to-use tomato sauce prepared with ripe tomatoes, herbs, spices, garlic, and onion, ideal for homemade pizza.",صلصة بندورة جاهزة مع الأعشاب والبهارات والثوم والبصل، مثالية للبيتزا البيتية.,"Made from ripe tomatoes and tomato paste, combined with garlic, onion, herbs, spices, and lemon. This ready-to-use sauce has a balanced tomato flavor and smooth consistency, making it suitable for homemade pizza as well as pasta, sandwiches, and other tomato-based dishes.",,images/pizza-sauce-600g.jpg,,,,yes
+22,Sauces,صلصات ومعاجين,Tahini Sauce,صلصة الطحينة,290 g,290 غ,,"Creamy tahini made from carefully selected sesame seeds, perfect for dips, sauces, and everyday cooking.",طحينة كريمية من سمسم مختار، للتغميس والصلصات والطبخ اليومي.,"Prepared using sesame paste, water, lemon juice, garlic, flour, sugar, and salt, this smooth and creamy tahini is a Lebanese kitchen essential, ideal for dips, dressings, grilled meats, and everyday meals.",,images/tahini-sauce-290g.jpg,,,,yes
+23,Sauces,صلصات ومعاجين,Tahini Sauce with Chili,صلصة الطحينة بالحر,290 g,290 غ,,"A creamy sesame-based sauce with chili, lemon, garlic, and selected seasonings for a mildly spicy flavor.",صلصة طحينة كريمية مع الحر والحامض والثوم، بنكهة حارة خفيفة.,"A tahini-based sauce combining sesame paste with chili, lemon juice, garlic, herbs, and selected ingredients. Its creamy texture and spicy flavor make it suitable for dipping, spreading, or serving alongside grilled meats, sandwiches, wraps, and Mediterranean dishes.",,images/tahini-sauce-with-chili-290g.jpg,Spicy,حار,,yes
+24,Sauces,صلصات ومعاجين,Tahini Sauce with Herbs,صلصة الطحينة بالأعشاب,290 g,290 غ,,"A delicious twist on classic tahini, blended with aromatic herbs for extra freshness.",لمسة جديدة على الطحينة الكلاسيكية مع أعشاب عطرية لمزيد من الانتعاش.,"Made with sesame paste, water, lemon juice, herbs, garlic, flour, sugar, and salt, this creamy blend combines the richness of tahini with aromatic herbs for a fresh Mediterranean flavor. Perfect as a dip, spread, or accompaniment to grilled dishes and vegetables.",,images/tahini-sauce-with-herbs-290g.jpg,,,,yes
+25,Sauces,صلصات ومعاجين,Tahini Sauce with Turmeric,صلصة الطحينة بالكركم,290 g,290 غ,,"A smooth sesame-based sauce blended with turmeric, lemon, garlic, and selected spices.",صلصة طحينة ناعمة مع الكركم والحامض والثوم وبهارات مختارة.,"A creamy sesame sauce prepared with tahini, lemon juice, sunflower oil, turmeric, garlic, spices, sugar, and salt. It offers a balanced combination of sesame richness and mild spice, making it suitable as a dip, dressing, spread, or accompaniment to a variety of dishes.",,images/tahini-sauce-with-turmeric-290g.jpg,,,,yes
+26,Sauces,صلصات ومعاجين,Tomato Paste,رب البندورة,600 g,600 غ,,Rich tomato paste prepared from ripe tomatoes to enhance every homemade recipe.,رب بندورة غني من بندورة ناضجة، يغني كل طبخة بيتية.,"Made with concentrated tomato juice and salt, our Tomato Paste provides a rich, intense tomato flavor that enhances soups, sauces, stews, and countless homemade recipes.",,images/tomato-paste-600g.jpg,,,,yes
+27,Pantry,مونة,Apple Chips,رقائق التفاح,,,,"Crunchy dried apple slices, a light snack.",شرائح تفاح مجففة ومقرمشة، وجبة خفيفة.,,,images/apple-chips.jpg,,,,yes
+`;
+
+/* ---------- state ---------- */
+const $ = s => document.querySelector(s);
+const store = { get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } },
+                set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} } };
+let lang = store.get("adira_lang", (navigator.language||"").startsWith("ar")?"ar":"en");
+let cart = store.get("adira_cart", {}) || {};
+let draft = store.get("adira_draft", {}) || {};
+let products=[], shopCat="all", query="", detailQty=1, current={name:"home"};
+
+const t = k => T[lang][k] ?? k;
+const money = n => CURRENCY + Number(n).toFixed(2);
+const L = (p,f) => (lang==="ar" && p[f+"_ar"]) ? p[f+"_ar"] : (p[f]||"");
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ---------- data ---------- */
+function parseCSV(text){
+  const rows=[]; let row=[], cell="", q=false; text=text.replace(/^﻿/,"");
+  for(let i=0;i<text.length;i++){ const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){cell+='"';i++;} else q=false; } else cell+=c; }
+    else if(c==='"') q=true;
+    else if(c===","){ row.push(cell); cell=""; }
+    else if(c==="\n"||c==="\r"){ if(c==="\r"&&text[i+1]==="\n") i++; row.push(cell); rows.push(row); row=[]; cell=""; }
+    else cell+=c; }
+  if(cell!==""||row.length){ row.push(cell); rows.push(row); }
+  const head=(rows.shift()||[]).map(h=>h.trim().toLowerCase());
+  return rows.filter(r=>r.some(x=>x.trim())).map(r=>Object.fromEntries(head.map((h,i)=>[h,(r[i]||"").trim()])));
+}
+const yes = v => /^(yes|y|true|1|نعم)$/i.test(v||"");
+function toProducts(rows){
+  return rows.map((r,i)=>({ id:r.id||String(i+1), category:r.category||"Other", category_ar:r.category_ar,
+    name:r.name, name_ar:r.name_ar, description:r.description, description_ar:r.description_ar, details:r.details, details_ar:r.details_ar,
+    price:(String(r.price||"").replace(/[^0-9.]/g,"")==="" ? null : parseFloat(String(r.price).replace(/[^0-9.]/g,""))), unit:r.unit, unit_ar:r.unit_ar,
+    image:r.image, badge:r.badge, badge_ar:r.badge_ar, popular:yes(r.popular),
+    available:!/^(no|n|false|0|sold out)$/i.test(r.available||"yes") })).filter(p=>p.name);
+}
+async function loadProducts(){
+  for(const src of [SHEET_CSV_URL,"products.csv"].filter(Boolean)){
+    try{ const res=await fetch(src+(src.includes("?")?"&":"?")+"t="+Date.now()); if(!res.ok) throw 0;
+         const list=toProducts(parseCSV(await res.text())); if(list.length) return list; }
+    catch(e){ if(src===SHEET_CSV_URL) setTimeout(()=>toast(t("loadFail")),600); }
+  }
+  return toProducts(parseCSV(FALLBACK_CSV));
+}
+function categories(){ const m=new Map(); products.forEach(p=>{ if(!m.has(p.category)) m.set(p.category,{en:p.category,ar:p.category_ar||p.category,color:CAT_COLORS[m.size%CAT_COLORS.length]}); }); return [...m.values()]; }
+const catColor = c => (categories().find(x=>x.en===c)||{}).color || "#CE1126";
+const catName = c => { const x=categories().find(k=>k.en===c); return x?(lang==="ar"?x.ar:x.en):c; };
+
+/* ---------- jar drawing (shown when a product has no photo yet) ---------- */
+function jarSVG(seed,color,bg=true){
+  let h=0; for(const c of String(seed)) h=(h*31+c.charCodeAt(0))>>>0;
+  const fills=["#E07A2F","#C8322B","#D9A13B","#8BA64A","#9C3B2E","#E5B85C","#7A2E3B"]; const fill=fills[h%fills.length];
+  const box = bg ? 'viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice"' : 'viewBox="58 10 84 134"';
+  return `<svg ${box} aria-hidden="true">${bg?'<rect width="200" height="150" fill="#F4ECE1"/>':''}
+   <g transform="translate(62 14)"><rect x="8" y="0" width="60" height="18" rx="4" fill="#fff" stroke="#E4D9CB" stroke-width="2"/>
+   <path d="M4 20h68v6c4 4 6 8 6 14v74c0 7-5 12-12 12H10c-7 0-12-5-12-12V40c0-6 2-10 6-14z" fill="${fill}"/>
+   <rect x="-2" y="58" width="80" height="44" fill="#F8F2E9"/><rect x="-2" y="58" width="80" height="6" fill="${color}"/>
+   <text x="38" y="88" text-anchor="middle" font-family="Segoe UI,Arial" font-weight="800" font-size="17" fill="${color}">ådirá</text></g></svg>`;
+}
+function imgFail(img){ const s=document.createElement("span"); s.innerHTML=jarSVG(img.dataset.seed,img.dataset.color); img.replaceWith(s.firstElementChild); }
+const picHTML = p => p.image
+  ? `<img src="${esc(p.image)}" alt="${esc(L(p,"name"))}" loading="lazy" data-seed="${esc(p.name)}" data-color="${catColor(p.category)}" onerror="imgFail(this)">`
+  : jarSVG(p.name,catColor(p.category));
+
+/* ---------- icons ---------- */
+const I = {
+  plus:'<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  search:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  back:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+  wa:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.8 14.1c-.25.7-1.44 1.34-1.98 1.39-.5.05-1.13.07-1.83-.15-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.93-4.36-.14-.19-1.18-1.57-1.18-3s.75-2.13 1.02-2.42c.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.25.6.84 2.05.91 2.2.07.14.12.31.02.5-.1.19-.14.31-.29.48-.14.17-.3.38-.43.51-.14.14-.29.3-.12.58.17.29.75 1.24 1.61 2.01 1.1.98 2.03 1.29 2.32 1.43.29.14.46.12.63-.07.17-.19.72-.84.91-1.13.19-.29.38-.24.65-.14.26.1 1.67.79 1.96.93.29.14.48.22.55.34.07.12.07.7-.18 1.4z"/></svg>'
+};
+
+/* ---------- pieces ---------- */
+function productCard(p){
+  const n=cart[p.id]||0, badge=L(p,"badge"), href=`#/p/${encodeURIComponent(p.id)}`;
+  const ctrl = !p.available ? `<button class="plus" disabled aria-label="${t("soldOut")}">${I.plus}</button>`
+    : n ? `<div class="step"><button data-dec="${esc(p.id)}" aria-label="−">−</button><span>${n}</span><button data-inc="${esc(p.id)}" aria-label="+">+</button></div>`
+    : `<button class="plus" data-inc="${esc(p.id)}" aria-label="${t("add")}: ${esc(L(p,"name"))}">${I.plus}</button>`;
+  const tag = !p.available ? `<span class="badge" style="--c:#6B625B">${t("soldOut")}</span>` : badge ? `<span class="badge" style="--c:${catColor(p.category)}">${esc(badge)}</span>` : "";
+  return `<article class="card pcard${p.available?"":" out"}">
+    <a class="pic" href="${href}">${picHTML(p)}${tag}</a>
+    <div class="info"><a href="${href}"><h3>${esc(L(p,"name"))}</h3></a><span class="unit">${esc(L(p,"unit"))}</span>
+    <div class="row">${priceHTML(p)}${ctrl}</div></div></article>`;
+}
+const searchBox = () => `<label class="search">${I.search}<input type="search" id="q" value="${esc(query)}" placeholder="${t("search")}" aria-label="${t("search")}"></label>`;
+
+/* ---------- views ---------- */
+function viewHome(){
+  let pop=products.filter(p=>p.popular&&p.available); if(!pop.length) pop=products.filter(p=>p.available);
+  const heroJars=["Apricot","Pickle","Sauce","Fig","Zaatar","Makdous","Kishk"].map((s,i)=>jarSVG(s,CAT_COLORS[i%4],false)).join("");
+  return `${searchBox()}
+  <div class="home-top">
+    <div class="hero" id="hero"><div class="jars">${heroJars}</div>
+      <div class="hero-label"><strong>${t("heroTitle")}</strong><span>${t("heroSub")}</span></div></div>
+    <div class="card cats"><h2>${t("byCat")}</h2><div class="grid2">
+      ${categories().map(c=>`<a class="pill" style="--c:${c.color}" href="#/shop/${encodeURIComponent(c.en)}">${esc(lang==="ar"?c.ar:c.en)}</a>`).join("")}
+    </div></div>
+  </div>
+  <h2 class="sec">${t("popular")}</h2>
+  <div class="popular">${pop.slice(0,4).map(productCard).join("")}</div>`;
+}
+function shopList(){
+  const q=query.trim().toLowerCase();
+  return products.filter(p=>(shopCat==="all"||p.category===shopCat) && (!q || [p.name,p.name_ar,p.description,p.description_ar,p.details,p.category,p.category_ar,p.unit].join(" ").toLowerCase().includes(q)));
+}
+function viewShop(){
+  const list=shopList();
+  return `${searchBox()}
+  <div class="card shopbar"><strong>${shopCat==="all"?t("allProducts"):esc(catName(shopCat))}</strong><span>${list.length} ${t("items")}</span></div>
+  <div class="filters" role="group">
+    <button class="filter" data-cat="all" aria-pressed="${shopCat==="all"}">${t("all")}</button>
+    ${categories().map(c=>`<button class="filter" data-cat="${esc(c.en)}" aria-pressed="${shopCat===c.en}">${esc(lang==="ar"?c.ar:c.en)}</button>`).join("")}
+  </div>
+  <div class="pgrid">${list.length?list.map(productCard).join(""):`<p class="empty" style="grid-column:1/-1">${t("noResults")}</p>`}</div>`;
+}
+function viewDetail(id){
+  const p=products.find(x=>x.id===id);
+  const sizes = p ? products.filter(x=>x.name===p.name) : [];
+  if(!p) return `<div class="card empty"><p>${t("notFound")}</p><a class="btn" href="#/shop">${t("shop")}</a></div>`;
+  return `<a class="back" href="#/shop">${I.back}${t("back")}</a>
+  <div class="detail">
+    <div class="big">${picHTML(p)}</div>
+    <div class="card panel">
+      <h1>${esc(L(p,"name"))}</h1>
+      <div class="sub">${esc(catName(p.category))} · ${esc(L(p,"unit"))}</div>
+      <div style="margin:14px 0 20px">${p.price==null?`<span class="price tbc" style="font-size:1.1rem">${t("askPrice")}</span>`:`<span class="price" style="font-size:1.6rem">${money(p.price)}</span>`}</div>
+      ${sizes.length>1?`<h4>${t("size")}</h4><div class="sizes">${sizes.map(x=>`<a href="#/p/${encodeURIComponent(x.id)}" aria-current="${x.id===p.id}">${esc(L(x,"unit"))}</a>`).join("")}</div>`:""}
+      <h4>${t("description")}</h4><p class="desc">${esc(lang==="ar" ? (p.details_ar||p.description_ar||p.details||p.description) : (p.details||p.description))}</p>
+      ${p.available ? `<div class="qtyrow"><h4 style="margin:0">${t("quantity")}</h4>
+        <div class="step lg"><button data-dq="-1" aria-label="−">−</button><span id="dq">${detailQty}</span><button data-dq="1" aria-label="+">+</button></div></div>
+        <button class="btn" data-addn="${esc(p.id)}">${t("add")}</button>` : `<div class="soldout-note">${t("soldOut")}</div>`}
+    </div>
+  </div>`;
+}
+const priceHTML = (p,n=1) => p.price==null ? `<span class="price tbc">${t("askPrice")}</span>` : `<span class="price">${money(p.price*n)}</span>`;
+const lineText = (p,n) => p.price==null ? t("mPriceTbc") : money(p.price*n);
+const allTbc = () => cartItems().every(x=>x.p.price==null);
+const totalText = (msg) => allTbc() ? (msg?t("mTbc"):t("onWa")) : money(subtotal()+(fee()||0)) + (hasTbc() ? (msg?" + "+t("mPriceTbc"):" +") : "");
+const hasTbc = () => cartItems().some(x=>x.p.price==null);
+const cartItems = () => Object.entries(cart).map(([id,n])=>({p:products.find(x=>x.id===id),n})).filter(x=>x.p);
+const subtotal = () => cartItems().reduce((s,{p,n})=>s+(p.price||0)*n,0);
+const fee = () => DELIVERY_FEE==null ? null : Number(DELIVERY_FEE);
+function viewCart(){
+  const list=cartItems();
+  if(!list.length) return `<div class="card empty"><p>${t("emptyCart")}</p><a class="btn" href="#/shop">${t("startShopping")}</a></div>`;
+  return `<div class="cart">
+  <section><h1>${t("yourOrder")}</h1>
+    ${list.map(({p,n})=>`<div class="card citem">
+      <a class="thumb" href="#/p/${encodeURIComponent(p.id)}">${picHTML(p)}</a>
+      <div><strong>${esc(L(p,"name"))}</strong><small>${t("qty")} ${n} · ${esc(L(p,"unit"))}</small></div>
+      <div class="right">${priceHTML(p,n)}
+        <div class="step"><button data-dec="${esc(p.id)}" aria-label="−">−</button><span>${n}</span><button data-inc="${esc(p.id)}" aria-label="+">+</button></div></div>
+    </div>`).join("")}
+  </section>
+  <section>
+    <div class="card box"><h3>${t("details")}</h3>
+      <form id="orderForm" novalidate>
+        <label>${t("name")}<input name="name" autocomplete="name"><span class="err" data-e="name"></span></label>
+        <label>${t("phone")}<input name="phone" type="tel" inputmode="tel" autocomplete="tel"><span class="err" data-e="phone"></span></label>
+        <label>${t("address")}<input name="address" autocomplete="street-address"><span class="err" data-e="address"></span></label>
+        <label>${t("payment")}<select name="pay"><option value="cod">${t("cod")}</option><option value="whish">${t("whish")}</option><option value="omt">${t("omt")}</option></select></label>
+        <label>${t("notes")}<textarea name="notes"></textarea></label>
+      </form></div>
+    <div class="card box"><h3>${t("summary")}</h3>
+      <div class="sum"><span>${t("subtotal")}</span><span>${allTbc()?t("onWa"):money(subtotal())}</span></div>
+      <div class="sum"><span>${t("delivery")}</span><span>${fee()==null?t("onWa"):money(fee())}</span></div>
+      <div class="sum total"><span>${t("total")}</span><span>${totalText()}</span></div>
+      ${hasTbc()?`<p class="fnote" style="text-align:start">${t("someTbc")}</p>`:""}
+    </div>
+    <button class="btn" id="sendBtn">${I.wa}<span>${t("send")}</span></button>
+    <p class="fnote">${t("sendNote")}</p>
+  </section></div>`;
+}
+
+/* ---------- router ---------- */
+function route(){
+  const parts=location.hash.replace(/^#\/?/,"").split("/").map(decodeURIComponent);
+  const [page,arg]=[parts[0], parts.slice(1).join("/")];
+  if(page==="shop"){ shopCat = arg && categories().some(c=>c.en===arg) ? arg : (arg?"all":shopCat); return {name:"shop"}; }
+  if(page==="p") return {name:"detail",id:arg};
+  if(page==="cart") return {name:"cart"};
+  return {name:"home"};
+}
+function render(keepSearchFocus){
+  saveDraft();
+  current=route();
+  const caret = keepSearchFocus && $("#q") ? $("#q").selectionStart : null;
+  $("#view").innerHTML = current.name==="shop"?viewShop(): current.name==="detail"?viewDetail(current.id): current.name==="cart"?viewCart(): viewHome();
+  fillDraft();
+  $("#barTitle").textContent=t({home:"barHome",shop:"barShop",detail:"barDetail",cart:"barCart"}[current.name]);
+  $("#appbar").classList.toggle("sub",current.name!=="home");
+  const navKey=current.name==="detail"?"shop":current.name;
+  document.querySelectorAll("[data-nav]").forEach(a=>{ if(a.dataset.nav===navKey) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+  const hero=$("#hero"); if(hero){ const im=new Image(); im.onload=()=>hero.classList.add("has-photo"); im.src="images/hero.jpg"; }
+  if(keepSearchFocus && $("#q")){ const q=$("#q"); q.focus(); const c=caret??q.value.length; q.setSelectionRange(c,c); }
+  updateCount();
+}
+function updateCount(){ const n=Object.values(cart).reduce((a,b)=>a+b,0); document.querySelectorAll("[data-count]").forEach(el=>{ el.textContent=n; el.classList.toggle("hidden",!n); }); }
+
+/* ---------- cart actions ---------- */
+function setQty(id,n,msg){
+  const p=products.find(x=>x.id===id); if(!p||!p.available) return;
+  const before=cart[id]||0; n=Math.max(0,Math.min(99,n));
+  if(n) cart[id]=n; else delete cart[id];
+  store.set("adira_cart",cart);
+  if(msg) toast(msg); else if(!before&&n) toast(t("added"));
+  render();
+}
+function saveDraft(){ const f=$("#orderForm"); if(f){ draft=Object.fromEntries(new FormData(f)); store.set("adira_draft",draft); } }
+function fillDraft(){ const f=$("#orderForm"); if(!f) return; for(const [k,v] of Object.entries(draft)) if(f.elements[k]) f.elements[k].value=v; }
+
+function sendOrder(){
+  saveDraft(); const d=draft; let ok=true;
+  document.querySelectorAll(".err").forEach(e=>e.textContent="");
+  const need=(k,m,test)=>{ if(!test((d[k]||"").trim())){ $(`[data-e=${k}]`).textContent=m; ok=false; } };
+  need("name",t("needName"),v=>v.length>1);
+  need("phone",t("needPhone"),v=>v.replace(/\D/g,"").length>=7);
+  need("address",t("needAddress"),v=>v.length>2);
+  if(!ok){ document.querySelector(".err:not(:empty)").parentElement.querySelector("input").focus(); return; }
+  const pay={cod:t("cod"),whish:t("whish"),omt:t("omt")}[d.pay]||d.pay;
+  const msg=[`*${t("msgHead")}*`,"",
+    `${t("mName")}: ${d.name.trim()}`,`${t("mPhone")}: ${d.phone.trim()}`,`${t("mAddr")}: ${d.address.trim()}`,`${t("mPay")}: ${pay}`,"",
+    `*${t("mItems")}:*`, ...cartItems().map(({p,n})=>`• ${n} × ${L(p,"name")} (${L(p,"unit")}) — ${lineText(p,n)}`),"",
+    `${t("mSub")}: ${allTbc()?t("mTbc"):money(subtotal())}`, `${t("mDel")}: ${fee()==null?t("mTbc"):money(fee())}`, `*${t("mTotal")}: ${totalText(true)}*`,
+    (d.notes||"").trim()?`\n${t("mNotes")}: ${d.notes.trim()}`:""].join("\n").trim();
+  toast(t("opening"));
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,"_blank","noopener");
+}
+
+let tt; function toast(m){ const el=$("#toast"); el.textContent=m; el.classList.add("on"); clearTimeout(tt); tt=setTimeout(()=>el.classList.remove("on"),2000); }
+
+/* ---------- language ---------- */
+function applyLang(){
+  document.documentElement.lang=lang; document.documentElement.dir=lang==="ar"?"rtl":"ltr";
+  document.querySelectorAll("[data-i]").forEach(el=>el.textContent=t(el.dataset.i));
+  $("#langBtn").textContent=t("lang");
+  $("#langBtn").setAttribute("aria-label",lang==="ar"?"Switch to English":"التبديل إلى العربية");
+  store.set("adira_lang",lang); render();
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.dataset.inc) setQty(b.dataset.inc,(cart[b.dataset.inc]||0)+1);
+  else if(b.dataset.dec) setQty(b.dataset.dec,(cart[b.dataset.dec]||0)-1);
+  else if(b.dataset.cat){ shopCat=b.dataset.cat; history.replaceState(null,"",shopCat==="all"?"#/shop":"#/shop/"+encodeURIComponent(shopCat)); render(); }
+  else if(b.dataset.dq){ detailQty=Math.max(1,Math.min(99,detailQty+Number(b.dataset.dq))); $("#dq").textContent=detailQty; }
+  else if(b.dataset.addn){ const id=b.dataset.addn; const n=detailQty; detailQty=1; setQty(id,(cart[id]||0)+n,t("added")); }
+  else if(b.id==="sendBtn") sendOrder();
+  else if(b.id==="langBtn"){ lang=lang==="en"?"ar":"en"; applyLang(); }
+});
+document.addEventListener("input",e=>{
+  if(e.target.id==="q"){ query=e.target.value; if(current.name!=="shop"){ shopCat="all"; location.hash="#/shop"; } else render(true); }
+  else if(e.target.closest("#orderForm")){ const er=e.target.parentElement.querySelector('.err'); if(er) er.textContent=''; saveDraft(); }
+});
+window.addEventListener("hashchange",()=>{
+  const fromSearch = document.activeElement && document.activeElement.id==="q";
+  detailQty=1; render(fromSearch); if(!fromSearch) window.scrollTo(0,0);
+});
+document.querySelectorAll("[data-wa]").forEach(a=>a.href=`https://wa.me/${WHATSAPP_NUMBER}`);
+$("#yr").textContent=new Date().getFullYear();
+
+loadProducts().then(list=>{ products=list; for(const id of Object.keys(cart)) if(!products.some(p=>p.id===id)) delete cart[id]; applyLang(); });
+</script>
+</body>
+</html>
