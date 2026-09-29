@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en" dir="ltr">
 <head>
@@ -369,7 +370,10 @@ function jarSVG(seed,color,bg=true){
    <rect x="-2" y="58" width="80" height="44" fill="#F8F2E9"/><rect x="-2" y="58" width="80" height="6" fill="${color}"/>
    <text x="38" y="88" text-anchor="middle" font-family="Segoe UI,Arial" font-weight="800" font-size="17" fill="${color}">ådirá</text></g></svg>`;
 }
-function imgFail(img){ const s=document.createElement("span"); s.innerHTML=jarSVG(img.dataset.seed,img.dataset.color); img.replaceWith(s.firstElementChild); }
+function imgFail(img){
+  const src=img.getAttribute("src")||"";
+  if(!img.dataset.retried && src.includes("/")){ img.dataset.retried="1"; img.src=src.split("/").pop(); return; }
+  const s=document.createElement("span"); s.innerHTML=jarSVG(img.dataset.seed,img.dataset.color); img.replaceWith(s.firstElementChild); }
 const picHTML = p => p.image
   ? `<img src="${esc(p.image)}" alt="${esc(L(p,"name"))}" loading="lazy" data-seed="${esc(p.name)}" data-color="${catColor(p.category)}" onerror="imgFail(this)">`
   : jarSVG(p.name,catColor(p.category));
@@ -503,7 +507,7 @@ function render(keepSearchFocus){
   $("#appbar").classList.toggle("sub",current.name!=="home");
   const navKey=current.name==="detail"?"shop":current.name;
   document.querySelectorAll("[data-nav]").forEach(a=>{ if(a.dataset.nav===navKey) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
-  const hero=$("#hero"); if(hero){ const im=new Image(); im.onload=()=>hero.classList.add("has-photo"); im.src="images/hero.jpg"; }
+  const hero=$("#hero"); if(hero){ const tryHero=(srcs)=>{ if(!srcs.length) return; const im=new Image(); im.onload=()=>{ hero.style.backgroundImage=`url(${srcs[0]})`; hero.classList.add("has-photo"); }; im.onerror=()=>tryHero(srcs.slice(1)); im.src=srcs[0]; }; tryHero(["images/hero.jpg","hero.jpg"]); }
   if(keepSearchFocus && $("#q")){ const q=$("#q"); q.focus(); const c=caret??q.value.length; q.setSelectionRange(c,c); }
   updateCount();
 }
